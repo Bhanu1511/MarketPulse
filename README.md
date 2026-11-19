@@ -1,5 +1,9 @@
 📊 MarketPulse – Business & Customer Intelligence Platform
 
+🌐 Live Dashboard: https://marketpulse-bhanu1511.streamlit.app/
+
+MarketPulse is an interactive Business Intelligence and Customer Analytics platform built using Python, SQL, PostgreSQL and Streamlit.
+
 MarketPulse is an interactive Business Intelligence and Customer Analytics platform built using Python, SQL, PostgreSQL and Streamlit.
 
 The project analyses Brazilian e-commerce data to uncover business trends, understand customer behaviour, evaluate product performance and identify operational improvements.
