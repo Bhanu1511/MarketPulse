@@ -17,7 +17,6 @@ st.set_page_config(
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data" / "analysis_outputs"
 
-# Currency conversion
 BRL_TO_INR = 15.8392
 EXCHANGE_RATE_DATE = "19 November 2026"
 
@@ -59,11 +58,7 @@ satisfaction = data["satisfaction"].copy()
 # 3. CURRENCY CONVERSION
 # =====================================================
 
-# Original dataset is in Brazilian Real.
-# Convert revenue to INR for dashboard presentation.
-
 monthly["revenue"] = monthly["revenue"] * BRL_TO_INR
-
 category["revenue"] = category["revenue"] * BRL_TO_INR
 
 monthly["month_date"] = pd.to_datetime(
@@ -71,7 +66,7 @@ monthly["month_date"] = pd.to_datetime(
     errors="coerce"
 )
 
-monthly = monthly.sort_values("month_date")
+monthly = monthly.sort_values("month_date").reset_index(drop=True)
 
 
 # =====================================================
@@ -96,7 +91,7 @@ html, body, [class*="css"] {
     background: transparent;
 }
 
-/* ---------------- SIDEBAR ---------------- */
+/* SIDEBAR */
 
 [data-testid="stSidebar"] {
     background: linear-gradient(
@@ -111,8 +106,6 @@ html, body, [class*="css"] {
     padding: 30px 18px;
 }
 
-/* BRAND */
-
 .brand-container {
     display: flex;
     align-items: center;
@@ -124,11 +117,7 @@ html, body, [class*="css"] {
     width: 45px;
     height: 45px;
     min-width: 45px;
-    background: linear-gradient(
-        135deg,
-        #12A892,
-        #176B87
-    );
+    background: linear-gradient(135deg, #12A892, #176B87);
     border-radius: 13px;
     display: flex;
     align-items: center;
@@ -136,15 +125,12 @@ html, body, [class*="css"] {
     color: white;
     font-size: 19px;
     font-weight: 800;
-    letter-spacing: -1px;
-    box-shadow: 0 5px 15px rgba(18,168,146,0.25);
 }
 
 .brand-name {
     font-size: 23px;
     font-weight: 800;
     color: #FFFFFF;
-    letter-spacing: -0.8px;
 }
 
 .brand-sub {
@@ -154,8 +140,6 @@ html, body, [class*="css"] {
     margin-bottom: 35px;
 }
 
-/* SIDEBAR LABELS */
-
 .sidebar-label {
     color: #8195B3;
     font-size: 10px;
@@ -163,8 +147,6 @@ html, body, [class*="css"] {
     letter-spacing: 1.5px;
     margin: 25px 0 12px 8px;
 }
-
-/* NAVIGATION */
 
 [data-testid="stSidebar"] [data-testid="stRadio"] > div {
     gap: 8px;
@@ -174,7 +156,6 @@ html, body, [class*="css"] {
     background: transparent;
     padding: 12px 14px;
     border-radius: 9px;
-    transition: all 0.2s ease;
 }
 
 [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
@@ -196,8 +177,6 @@ html, body, [class*="css"] {
     display: none;
 }
 
-/* DATA SOURCE CARD */
-
 .sidebar-info {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.09);
@@ -209,8 +188,6 @@ html, body, [class*="css"] {
     line-height: 1.8;
 }
 
-/* SIDEBAR FOOTER */
-
 .sidebar-footer {
     color: #8195B3;
     font-size: 11px;
@@ -219,7 +196,7 @@ html, body, [class*="css"] {
     padding-top: 18px;
 }
 
-/* ---------------- MAIN CONTENT ---------------- */
+/* MAIN CONTENT */
 
 .page-title {
     font-size: 30px;
@@ -294,7 +271,7 @@ div[data-testid="stPlotlyChart"] {
     padding: 10px;
 }
 
-/* DOWNLOAD BUTTON */
+/* BUTTONS */
 
 .stDownloadButton button {
     background: #176B87;
@@ -309,8 +286,6 @@ div[data-testid="stPlotlyChart"] {
     background: #12566D;
     color: white;
 }
-
-/* FOOTER */
 
 .footer {
     text-align: center;
@@ -429,9 +404,7 @@ with st.sidebar:
         <div class="sidebar-info">
             <b>🇧🇷 Brazilian E-Commerce</b><br>
             Olist Public Dataset<br>
-            <span style="color:#91A7C5">
-                2016 – 2018
-            </span>
+            <span style="color:#91A7C5">2016 – 2018</span>
         </div>
     """, unsafe_allow_html=True)
 
@@ -439,9 +412,7 @@ with st.sidebar:
         <div class="sidebar-info">
             <b>💱 Display Currency</b><br>
             Indian Rupee (INR)<br>
-            <span style="color:#91A7C5">
-                Converted from BRL
-            </span>
+            <span style="color:#91A7C5">Converted from BRL</span>
         </div>
     """, unsafe_allow_html=True)
 
@@ -449,7 +420,7 @@ with st.sidebar:
         <div class="sidebar-footer">
             <b>MARKETPULSE</b><br>
             Business Intelligence Platform<br>
-            Version 1.0
+            Version 2.0
         </div>
     """, unsafe_allow_html=True)
 
@@ -493,40 +464,14 @@ def show_kpis():
     cols = st.columns(5)
 
     metrics = [
-
-        (
-            "Total Revenue",
-            f"₹ {total_revenue / 10000000:.2f} Cr",
-            "💰"
-        ),
-
-        (
-            "Delivered Orders",
-            f"{total_orders:,}",
-            "📦"
-        ),
-
-        (
-            "Unique Customers",
-            f"{total_customers:,}",
-            "👥"
-        ),
-
-        (
-            "On-Time Delivery",
-            f"{on_time_rate:.1f}%",
-            "🚚"
-        ),
-
-        (
-            "Average Rating",
-            f"{average_rating:.2f}/5",
-            "⭐"
-        )
+        ("Total Revenue", f"₹ {total_revenue / 10000000:.2f} Cr", "💰"),
+        ("Delivered Orders", f"{total_orders:,}", "📦"),
+        ("Unique Customers", f"{total_customers:,}", "👥"),
+        ("On-Time Delivery", f"{on_time_rate:.1f}%", "🚚"),
+        ("Average Rating", f"{average_rating:.2f}/5", "⭐")
     ]
 
     for col, item in zip(cols, metrics):
-
         with col:
             metric_card(*item)
 
@@ -564,14 +509,8 @@ if page == "🏠  Business Overview":
 
     fig.update_traces(
         line=dict(color="#176B87", width=3),
-
         fillcolor="rgba(23,107,135,0.12)",
-
-        hovertemplate=(
-            "%{x}<br>"
-            "Revenue: ₹ %{y:,.2f}"
-            "<extra></extra>"
-        )
+        hovertemplate="%{x}<br>Revenue: ₹ %{y:,.2f}<extra></extra>"
     )
 
     fig.update_layout(
@@ -583,8 +522,6 @@ if page == "🏠  Business Overview":
     st.plotly_chart(fig, use_container_width=True)
 
     left, right = st.columns(2)
-
-    # TOP CATEGORIES
 
     with left:
 
@@ -606,12 +543,7 @@ if page == "🏠  Business Overview":
 
         fig.update_traces(
             marker_color="#176B87",
-
-            hovertemplate=(
-                "%{y}<br>"
-                "Revenue: ₹ %{x:,.2f}"
-                "<extra></extra>"
-            )
+            hovertemplate="%{y}<br>Revenue: ₹ %{x:,.2f}<extra></extra>"
         )
 
         fig.update_layout(
@@ -621,8 +553,6 @@ if page == "🏠  Business Overview":
         )
 
         st.plotly_chart(fig, use_container_width=True)
-
-    # CUSTOMER SEGMENTS
 
     with right:
 
@@ -659,21 +589,17 @@ if page == "🏠  Business Overview":
 
         st.plotly_chart(fig, use_container_width=True)
 
-    # BUSINESS INSIGHTS
-
     st.markdown(
         '<div class="section-title">Business Highlights</div>',
         unsafe_allow_html=True
     )
 
     peak_month = monthly.loc[
-        monthly["revenue"].idxmax(),
-        "month"
+        monthly["revenue"].idxmax(), "month"
     ]
 
     peak_category = category.loc[
-        category["revenue"].idxmax(),
-        "category"
+        category["revenue"].idxmax(), "category"
     ]
 
     st.markdown(
@@ -711,7 +637,7 @@ elif page == "📈  Revenue Analytics":
 
     st.markdown(
         '<div class="page-subtitle">'
-        'Explore revenue trends and category performance.'
+        'Explore revenue trends, monthly growth and category performance.'
         '</div>',
         unsafe_allow_html=True
     )
@@ -724,41 +650,230 @@ elif page == "📈  Revenue Analytics":
 
     filtered = monthly[
         monthly["month"].isin(selected_months)
-    ]
+    ].copy()
+
+    # ==========================================
+    # REVENUE GROWTH CALCULATION
+    # ==========================================
+
+    growth_data = monthly.copy()
+
+    growth_data["previous_revenue"] = (
+        growth_data["revenue"].shift(1)
+    )
+
+    growth_data["growth_percentage"] = (
+        (
+            growth_data["revenue"]
+            - growth_data["previous_revenue"]
+        )
+        / growth_data["previous_revenue"].replace(0, pd.NA)
+    ) * 100
+
+    growth_filtered = growth_data[
+        growth_data["month"].isin(selected_months)
+    ].copy()
+
+    # ==========================================
+    # SELECTED PERIOD REVENUE
+    # ==========================================
 
     st.metric(
         "Revenue in Selected Period",
         f"₹ {filtered['revenue'].sum() / 10000000:.2f} Cr"
     )
 
-    fig = px.line(
-        filtered,
-        x="month",
-        y="revenue",
-        markers=True,
-        labels={
-            "month": "Month",
-            "revenue": "Revenue (INR)"
-        }
+    # ==========================================
+    # MONTHLY REVENUE TREND
+    # ==========================================
+
+    st.markdown(
+        '<div class="section-title">Monthly Revenue Trend</div>',
+        unsafe_allow_html=True
     )
 
-    fig.update_traces(
-        line=dict(color="#176B87", width=3),
+    if not filtered.empty:
 
-        hovertemplate=(
-            "%{x}<br>"
-            "Revenue: ₹ %{y:,.2f}"
-            "<extra></extra>"
+        fig = px.line(
+            filtered,
+            x="month",
+            y="revenue",
+            markers=True,
+            labels={
+                "month": "Month",
+                "revenue": "Revenue (INR)"
+            }
         )
+
+        fig.update_traces(
+            line=dict(color="#176B87", width=3),
+            hovertemplate="%{x}<br>Revenue: ₹ %{y:,.2f}<extra></extra>"
+        )
+
+        fig.update_layout(
+            **CHART_LAYOUT,
+            height=400,
+            yaxis_tickformat=",.0f"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    else:
+        st.info("Select at least one month to view revenue.")
+
+    # ==========================================
+    # REVENUE GROWTH ANALYSIS
+    # ==========================================
+
+    st.markdown(
+        '<div class="section-title">Revenue Growth Analysis</div>',
+        unsafe_allow_html=True
     )
 
-    fig.update_layout(
-        **CHART_LAYOUT,
-        height=400,
-        yaxis_tickformat=",.0f"
+    valid_growth = growth_filtered.dropna(
+        subset=["growth_percentage"]
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    if not filtered.empty:
+
+        highest_month = filtered.loc[
+            filtered["revenue"].idxmax()
+        ]
+
+        lowest_month = filtered.loc[
+            filtered["revenue"].idxmin()
+        ]
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+
+            if not valid_growth.empty:
+
+                latest_growth = valid_growth.iloc[-1]
+
+                growth_value = latest_growth["growth_percentage"]
+
+                st.metric(
+                    "Latest Monthly Growth",
+                    f"{growth_value:.2f}%",
+                    delta=f"{growth_value:.2f}%"
+                )
+
+            else:
+                st.metric(
+                    "Latest Monthly Growth",
+                    "N/A"
+                )
+
+        with col2:
+
+            st.metric(
+                "Highest Revenue Month",
+                highest_month["month"],
+                f"₹ {highest_month['revenue']:,.0f}"
+            )
+
+        with col3:
+
+            st.metric(
+                "Lowest Revenue Month",
+                lowest_month["month"],
+                f"₹ {lowest_month['revenue']:,.0f}"
+            )
+
+    # ==========================================
+    # MONTHLY GROWTH CHART
+    # ==========================================
+
+    st.markdown(
+        '<div class="section-title">Month-over-Month Growth</div>',
+        unsafe_allow_html=True
+    )
+
+    chart_growth = growth_filtered[
+        growth_filtered["month"] != "2017-01"
+    ].dropna(
+        subset=["growth_percentage"]
+    )
+
+    if not chart_growth.empty:
+
+        fig = px.bar(
+            chart_growth,
+            x="month",
+            y="growth_percentage",
+            color="growth_percentage",
+            color_continuous_scale=[
+                "#E76F51",
+                "#F4B942",
+                "#12A892"
+            ],
+            labels={
+                "month": "Month",
+                "growth_percentage": "Growth (%)"
+            }
+        )
+
+        fig.add_hline(
+            y=0,
+            line_dash="dash",
+            line_color="#718096"
+        )
+
+        fig.update_layout(
+            **CHART_LAYOUT,
+            height=370,
+            coloraxis_showscale=False
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
+    else:
+        st.info("Not enough monthly data to calculate growth.")
+
+    st.caption(
+        "Growth compares revenue with the previous calendar month. "
+        "January 2017 is excluded from the growth chart because "
+        "December 2016 had exceptionally low revenue, producing "
+        "a misleading percentage increase."
+    )
+
+    # ==========================================
+    # MONTHLY COMPARISON TABLE
+    # ==========================================
+
+    st.markdown(
+        '<div class="section-title">Monthly Revenue Comparison</div>',
+        unsafe_allow_html=True
+    )
+
+    growth_table = growth_filtered[
+        [
+            "month",
+            "previous_revenue",
+            "revenue",
+            "growth_percentage"
+        ]
+    ].rename(columns={
+        "month": "Month",
+        "previous_revenue": "Previous Revenue (INR)",
+        "revenue": "Current Revenue (INR)",
+        "growth_percentage": "Growth (%)"
+    })
+
+    st.dataframe(
+        growth_table.round(2),
+        use_container_width=True,
+        hide_index=True
+    )
+
+    # ==========================================
+    # CATEGORY ANALYSIS
+    # ==========================================
 
     st.markdown(
         '<div class="section-title">Category Analysis</div>',
@@ -775,39 +890,43 @@ elif page == "📈  Revenue Analytics":
         category["category"].isin(selected_categories)
     ]
 
-    fig = px.bar(
-        filtered_cat.sort_values("revenue"),
-        x="revenue",
-        y="category",
-        orientation="h",
-        labels={
-            "revenue": "Revenue (INR)",
-            "category": "Category"
-        }
-    )
+    if not filtered_cat.empty:
 
-    fig.update_traces(
-        marker_color="#12A892",
-
-        hovertemplate=(
-            "%{y}<br>"
-            "Revenue: ₹ %{x:,.2f}"
-            "<extra></extra>"
+        fig = px.bar(
+            filtered_cat.sort_values("revenue"),
+            x="revenue",
+            y="category",
+            orientation="h",
+            labels={
+                "revenue": "Revenue (INR)",
+                "category": "Category"
+            }
         )
-    )
 
-    fig.update_layout(
-        **CHART_LAYOUT,
-        height=420,
-        xaxis_tickformat=",.0f"
-    )
+        fig.update_traces(
+            marker_color="#12A892",
+            hovertemplate="%{y}<br>Revenue: ₹ %{x:,.2f}<extra></extra>"
+        )
 
-    st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(
+            **CHART_LAYOUT,
+            height=420,
+            xaxis_tickformat=",.0f"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
     st.download_button(
         "⬇ Download Revenue Report",
         filtered.to_csv(index=False),
         file_name="marketpulse_revenue_inr.csv",
+        mime="text/csv"
+    )
+
+    st.download_button(
+        "⬇ Download Growth Report",
+        growth_filtered.to_csv(index=False),
+        file_name="marketpulse_growth_report.csv",
         mime="text/csv"
     )
 
